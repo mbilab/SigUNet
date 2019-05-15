@@ -38,3 +38,11 @@ Notice : Put files of SignalP dataset into `data/SignalP` and put files of SPDS1
 
 For custom search space of m, n and filer size descripted in the paper, you can use your params file.
 Please make sure the format of your file is the same as `params/params.example.json`.
+
+It will show the result of SignalP dataset after training.
+
+3. Evaluate SPDS17 dataset
+
+```
+./evaluate_SPDS17.py [model_path]
+```

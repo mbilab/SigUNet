@@ -86,10 +86,10 @@ class SigUNet(Model):
 
 def get_model(input_layer=None):
 
-    def wrapper(n, m, kernel_size):
+    def wrapper(m, n, kernel_size):
 
         x = Input(shape=(96,), dtype=tf.int32) if input_layer is None else input_layer
-        logits = SigUNet(n, m, kernel_size)(x)
+        logits = SigUNet(m=m, n=n, kernel_size=kernel_size)(x)
 
         model = Model(inputs=x, outputs=logits)
         model.compile(loss='sparse_categorical_crossentropy', optimizer='adam')
