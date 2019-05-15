@@ -7,37 +7,37 @@ from .layers import Conv1DTranspose
 
 class SigUNet(Model):
 
-    def __init__(self, n, m, kernel_size):
+    def __init__(self, m, n, kernel_size):
         super(SigUNet, self).__init__()
 
         self._conv_layers = [
-            Conv1D(filters=n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
 
-            Conv1D(filters=n+m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n+m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
 
-            Conv1D(filters=n+2*m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n+2*m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+2*n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+2*n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
 
-            Conv1D(filters=n+3*m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n+3*m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+3*n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+3*n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
 
-            Conv1D(filters=n+2*m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n+2*m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+2*n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+2*n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
 
-            Conv1D(filters=n+m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n+m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m+n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
 
-            Conv1D(filters=n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
-            Conv1D(filters=n, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
+            Conv1D(filters=m, kernel_size=kernel_size, padding='same', activation=tf.nn.relu),
             Conv1D(filters=3, kernel_size=1, padding='same', activation=tf.nn.softmax),
         ]
 
         self._deconv_layers = [
-            Conv1DTranspose(filters=n+2*m, kernel_size=kernel_size, stride=2),
-            Conv1DTranspose(filters=n+m, kernel_size=kernel_size, stride=2),
-            Conv1DTranspose(filters=n, kernel_size=kernel_size, stride=2),
+            Conv1DTranspose(filters=m+2*n, kernel_size=kernel_size, stride=2),
+            Conv1DTranspose(filters=m+n, kernel_size=kernel_size, stride=2),
+            Conv1DTranspose(filters=m, kernel_size=kernel_size, stride=2),
         ]
 
     def call(self, x):

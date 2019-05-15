@@ -18,13 +18,11 @@ from sigunet.utils import k_fold_balance_split, get_thr, decision
 
 if __name__ == '__main__':
 
-    model_path = sys.argv[1]
+    params_file = sys.argv[1]
+    model_path = sys.argv[2]
 
-    params = {
-        'n': [16, 20, 24, 28],
-        'm': [4, 8, 12, 16],
-        'kernel_size': [7, 9, 11, 13],
-    }
+    with open(params_file, 'r') as f:
+        params = json.load(f)
 
     data = np.load('./data/features/train.npy')
     data = k_fold_balance_split(data, folds=5)
@@ -67,7 +65,7 @@ if __name__ == '__main__':
 
                 model = get_model(input_layer=None)(**grid)
                 model.fit(x_train, y_train,
-                          batch_size=32,
+                          batch_size=96,
                           epochs=1000,
                           verbose=2,
                           validation_data=(x_valid, y_valid),
@@ -98,7 +96,7 @@ if __name__ == '__main__':
                 va_mcc, va_thr = get_thr(va_label, va_pred)
                 eval_thr = min(max(0.65, va_thr + 0.1), 0.85)
 
-                with open(f'{model_path}/keep/config.json', 'w') as j:
+                with open(f'{model_path}/keep/grid_search_result.json', 'w') as j:
                     json.dump({'val_loss': f'{best_va_loss:.6f}', 'val_thr': va_thr, 'eval_thr': eval_thr, 'params': grid},
                               j, indent=4)
 
@@ -108,7 +106,7 @@ if __name__ == '__main__':
         os.rename(f'{model_path}/keep', f'{model_path}/{i}')
         np.save(f'{model_path}/{i}/eval.npy', eval_data)
 
-        with open(f'{model_path}/{i}/config.json') as j:
+        with open(f'{model_path}/{i}/grid_search_result.json') as j:
             info = json.load(j)
             eval_thr = info['eval_thr']
             config = info['params']
