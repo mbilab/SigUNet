@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from glob import glob
 import json
 import sys
 from pprint import pprint
@@ -11,30 +10,12 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.backend import get_session
 from sklearn.metrics import matthews_corrcoef, precision_score, recall_score, f1_score
 
-from sigunet.models import load_model
-from sigunet.layers import ThresholdDecision, Vote
-from sigunet.utils import decision
-
-class SubModel:
-
-    def __init__(self, model_path, mode):
-        with open(f'{model_path}/grid_search_result.json', 'r') as j:
-            self.config = json.load(j)
-
-        self.models = [load_model(self.config['params'], weights, mode) for weights in glob(f'{model_path}/*.h5')]
-        self.thr = self.config['eval_thr']
-
-    def predict(self, x):
-        y_pred = [model.predict(x) for model in self.models]
-        y_pred = sum(y_pred) / len(self.models)
-        y_pred = y_pred[:, :, 2]
-        y_pred = np.array([decision(seq, n=4, thr=self.thr) for seq in y_pred])
-        return y_pred
+from sigunet.eval import SubModule
 
 def main():
     with open(f'{sys.argv[1]}/metadata.json', 'r') as f:
         mode = json.load(f)['model']
-    models = [SubModel(f'{sys.argv[1]}/{i}', mode) for i in range(5)]
+    models = [SubModule(f'{sys.argv[1]}/{i}', mode) for i in range(5)]
     data = np.load('./data/features/test.npy')
 
     x = data['features']
