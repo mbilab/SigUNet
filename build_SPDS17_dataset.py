@@ -4,10 +4,12 @@ import sys
 
 import numpy as np
 
+from sigunet.constant import SEQUENCE_LENGTH, AMINO_ACID_LIST
+
 data_path = './data/SPDS17/'
 output_dir = './data/features/'
-amino_acid_list = 'VLIMFWYGAPSTCHRKQEND'
-sequence_length = 96
+amino_acid_list = AMINO_ACID_LIST
+sequence_length = SEQUENCE_LENGTH
 
 dataset_name = {
     'euk': 'Euk',

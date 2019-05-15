@@ -4,11 +4,13 @@ import sys
 
 import numpy as np
 
+from sigunet.constant import SEQUENCE_LENGTH, AMINO_ACID_LIST
+
 data_path = './data/SignalP/'
 output_dir = './data/features/'
-sequence_length = 96
+sequence_length = SEQUENCE_LENGTH
 
-amino_acid_list = 'VLIMFWYGAPSTCHRKQEND'
+amino_acid_list = AMINO_ACID_LIST
 
 
 def read_raw_data(file_path, db):
