@@ -1,0 +1,4 @@
+__pycache__/
+*.how
+*.fasta
+data/features/
