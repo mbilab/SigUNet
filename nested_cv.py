@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 from glob import glob
 import json
 import shutil
@@ -18,8 +19,16 @@ from sigunet.utils import k_fold_balance_split, get_thr, decision
 
 if __name__ == '__main__':
 
-    params_file = sys.argv[1]
-    model_path = sys.argv[2]
+    parser = argparse.ArgumentParser(description='Train SigUNet with nested cross validation')
+    parser.add_argument('params', help='Params file. See README.md or params/params.example.json.')
+    parser.add_argument('path', help='Save path of the model.')
+    parser.add_argument('--light', help='Use SigUNet-light.', action='store_true')
+
+    args = parser.parse_args()
+
+    params_file = args.params
+    model_path = args.path
+    mode = 'origin' if not args.light else 'light'
 
     with open(params_file, 'r') as f:
         params = json.load(f)
@@ -63,7 +72,7 @@ if __name__ == '__main__':
 
                 early_stop = EarlyStopping(patience=10, restore_best_weights=True)
 
-                model = get_model(input_layer=None)(**grid)
+                model = get_model(mode)(**grid)
                 model.fit(x_train, y_train,
                           batch_size=96,
                           epochs=1000,
@@ -111,7 +120,7 @@ if __name__ == '__main__':
             eval_thr = info['eval_thr']
             config = info['params']
 
-        models = [load_model(config, path) for path in glob(f'{model_path}/{i}/*.h5')]
+        models = [load_model(config, path, mode) for path in glob(f'{model_path}/{i}/*.h5')]
         y_eval_pred = sum([model.predict(x_eval) for model in models]) / 4
         eval_prediction.append((y_eval_label, y_eval_pred))
 
@@ -143,5 +152,10 @@ if __name__ == '__main__':
 
     pprint(result)
 
-    with open(f'{model_path}/result.json', 'w') as f:
-        json.dump(result, f, indent=4)
+    log = {
+        'result': result,
+        'model': mode,
+    }
+
+    with open(f'{model_path}/metadata.json', 'w') as f:
+        json.dump(log, f, indent=4)

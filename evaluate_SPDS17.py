@@ -17,11 +17,11 @@ from sigunet.utils import decision
 
 class SubModel:
 
-    def __init__(self, model_path):
+    def __init__(self, model_path, mode):
         with open(f'{model_path}/grid_search_result.json', 'r') as j:
             self.config = json.load(j)
 
-        self.models = [load_model(self.config['params'], weights) for weights in glob(f'{model_path}/*.h5')]
+        self.models = [load_model(self.config['params'], weights, mode) for weights in glob(f'{model_path}/*.h5')]
         self.thr = self.config['eval_thr']
 
     def predict(self, x):
@@ -32,7 +32,9 @@ class SubModel:
         return y_pred
 
 def main():
-    models = [SubModel(f'{sys.argv[1]}/{i}') for i in range(5)]
+    with open(f'{sys.argv[1]}/metadata.json', 'r') as f:
+        mode = json.load(f)['model']
+    models = [SubModel(f'{sys.argv[1]}/{i}', mode) for i in range(5)]
     data = np.load('./data/features/test.npy')
 
     x = data['features']
