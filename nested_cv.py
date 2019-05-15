@@ -26,7 +26,7 @@ if __name__ == '__main__':
         'kernel_size': [7, 9, 11, 13],
     }
 
-    data = np.load('../data/features/train.npy')
+    data = np.load('./data/features/train.npy')
     data = k_fold_balance_split(data, folds=5)
 
     eval_prediction = []
